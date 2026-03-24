@@ -5,7 +5,7 @@ import { z } from "zod";
 const BUGSY_API_URL = process.env.BUGSY_API_URL || "http://localhost:3000";
 const BUGSY_API_TOKEN = process.env.BUGSY_API_TOKEN;
 
-async function apiRequest(path, method = "GET", body = null) {
+async function apiRequest(path, method = "GET", body = null, prefix = "/api/mcp") {
   const options = {
     method,
     headers: {
@@ -14,7 +14,7 @@ async function apiRequest(path, method = "GET", body = null) {
     },
   };
   if (body) options.body = JSON.stringify(body);
-  const res = await fetch(`${BUGSY_API_URL}/api/mcp${path}`, options);
+  const res = await fetch(`${BUGSY_API_URL}${prefix}${path}`, options);
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`API error (${res.status}): ${text}`);
@@ -140,6 +140,53 @@ server.tool(
   },
   async ({ request_id, reason }) => {
     const data = await apiRequest(`/requests/${request_id}/reject`, "POST", { reason });
+    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+// ─── TestFlight Tools ───────────────────────────────────────
+
+server.tool(
+  "sync_testflight",
+  "Sync TestFlight feedback from App Store Connect into the request queue",
+  {},
+  async () => {
+    const data = await apiRequest("/sync", "POST", {}, "/api/testflight");
+    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+server.tool(
+  "list_auto_approve_rules",
+  "List TestFlight tester emails that are set to auto-approve",
+  {},
+  async () => {
+    const data = await apiRequest("/auto-approve", "GET", null, "/api/testflight");
+    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+server.tool(
+  "add_auto_approve_rule",
+  "Add a TestFlight tester email to the auto-approve list",
+  {
+    email: z.string().describe("Tester email to auto-approve"),
+    name: z.string().optional().describe("Tester name"),
+  },
+  async ({ email, name }) => {
+    const data = await apiRequest("/auto-approve", "POST", { email, name }, "/api/testflight");
+    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+server.tool(
+  "remove_auto_approve_rule",
+  "Remove a tester email from the auto-approve list",
+  {
+    email: z.string().describe("Tester email to remove"),
+  },
+  async ({ email }) => {
+    const data = await apiRequest("/auto-approve", "DELETE", { email }, "/api/testflight");
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   }
 );

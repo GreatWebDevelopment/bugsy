@@ -78,6 +78,7 @@ export default async function RequestDetailPage({
       <RequestActions requestId={request.id} status={request.status} />
 
       {/* Conversation */}
+      {request.conversation && (
       <div className="bg-white rounded-xl border border-gray-200 mb-6">
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
@@ -106,9 +107,10 @@ export default async function RequestDetailPage({
           ))}
         </div>
       </div>
+      )}
 
       {/* Screenshots */}
-      {request.conversation.screenshots.length > 0 && (
+      {request.conversation?.screenshots && request.conversation.screenshots.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 mb-6">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">

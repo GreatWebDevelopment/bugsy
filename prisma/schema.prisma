@@ -87,7 +87,7 @@ model Screenshot {
 
 model Request {
   id              String        @id @default(cuid())
-  conversationId  String        @unique
+  conversationId  String?       @unique
   title           String
   description     String
   type            RequestType   @default(BUG)
@@ -99,10 +99,13 @@ model Request {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
-  conversation    Conversation  @relation(fields: [conversationId], references: [id])
+  source          RequestSource @default(WIDGET)
+
+  conversation    Conversation?  @relation(fields: [conversationId], references: [id])
   claimedBy       User?         @relation("ClaimedBy", fields: [claimedById], references: [id])
   approvedBy      User?         @relation("ApprovedBy", fields: [approvedById], references: [id])
   solutions       Solution[]
+  testFlightFeedback TestFlightFeedback?
 }
 
 enum RequestType {
@@ -117,6 +120,12 @@ enum Priority {
   MEDIUM
   HIGH
   URGENT
+}
+
+enum RequestSource {
+  WIDGET
+  TESTFLIGHT
+  API
 }
 
 enum RequestStatus {
@@ -147,4 +156,59 @@ enum SolutionStatus {
   APPROVED
   REJECTED
   APPLIED
+}
+
+// ─── TestFlight Integration ─────────────────────────────────
+
+model TestFlightConfig {
+  id            String   @id @default(cuid())
+  issuerId      String
+  keyId         String
+  privateKey    String
+  appId         String
+  webhookSecret String?
+  enabled       Boolean  @default(true)
+  lastSyncAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  feedbacks     TestFlightFeedback[]
+}
+
+model TestFlightFeedback {
+  id              String                @id @default(cuid())
+  configId        String
+  appleFeedbackId String                @unique
+  feedbackType    TestFlightFeedbackType
+  testerEmail     String?
+  testerName      String?
+  deviceModel     String?
+  osVersion       String?
+  appVersion      String?
+  buildVersion    String?
+  comment         String?
+  screenshotUrl   String?
+  crashLog        String?
+  metadata        Json?
+  submittedAt     DateTime?
+  syncedAt        DateTime              @default(now())
+
+  config          TestFlightConfig @relation(fields: [configId], references: [id])
+  requestId       String?          @unique
+  request         Request?         @relation(fields: [requestId], references: [id])
+}
+
+enum TestFlightFeedbackType {
+  SCREENSHOT
+  CRASH
+}
+
+// ─── Auto-Approve Rules ─────────────────────────────────────
+
+model AutoApproveRule {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
 }
