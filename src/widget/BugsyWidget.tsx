@@ -278,8 +278,17 @@ const BugsyWidget: React.FC<BugsyConfig> = ({ apiUrl, position = 'bottom-right',
       }),
     });
     const data = await res.json();
-    const id = data.id || data.conversationId;
+    const id = data.conversation?.id || data.id || data.conversationId;
     setConversationId(id);
+    // Load initial messages from server
+    if (data.messages?.length) {
+      setMessages(data.messages.map((m: { id: string; content: string; sender: string; createdAt: string }) => ({
+        id: m.id,
+        content: m.content,
+        sender: m.sender === 'BUGSY' ? 'bugsy' : 'visitor',
+        timestamp: new Date(m.createdAt),
+      })));
+    }
     return id;
   }, [apiUrl, conversationId]);
 
@@ -305,29 +314,56 @@ const BugsyWidget: React.FC<BugsyConfig> = ({ apiUrl, position = 'bottom-right',
       });
       if (res.ok) {
         const data = await res.json();
-        if (data.reply) {
-          setMessages(prev => [...prev, { id: Date.now().toString() + 'r', content: data.reply, sender: 'bugsy', timestamp: new Date() }]);
+        const reply = data.bugsyMessage?.content || data.reply;
+        if (reply) {
+          setMessages(prev => [...prev, { id: data.bugsyMessage?.id || Date.now().toString() + 'r', content: reply, sender: 'bugsy', timestamp: new Date() }]);
         }
       }
     } catch { /* silently handle */ }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const url = reader.result as string;
-      setMessages(prev => [...prev, {
-        id: Date.now().toString(),
-        content: `Screenshot: ${file.name}`,
-        sender: 'visitor',
-        timestamp: new Date(),
-        imageUrl: url,
-      }]);
-    };
-    reader.readAsDataURL(file);
     e.target.value = '';
+
+    // Show local preview immediately
+    const localUrl = URL.createObjectURL(file);
+    const tempId = Date.now().toString();
+    setMessages(prev => [...prev, {
+      id: tempId,
+      content: `Uploading: ${file.name}...`,
+      sender: 'visitor',
+      timestamp: new Date(),
+      imageUrl: localUrl,
+    }]);
+
+    try {
+      const cid = await ensureConversation();
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch(`${apiUrl}/api/widget/conversation/${cid}/screenshot`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // Update message with server URL
+        setMessages(prev => prev.map(m =>
+          m.id === tempId
+            ? { ...m, content: `Screenshot: ${file.name}`, imageUrl: `${apiUrl}${data.url}` }
+            : m
+        ));
+      } else {
+        setMessages(prev => prev.map(m =>
+          m.id === tempId ? { ...m, content: `Screenshot: ${file.name} (upload failed)` } : m
+        ));
+      }
+    } catch {
+      setMessages(prev => prev.map(m =>
+        m.id === tempId ? { ...m, content: `Screenshot: ${file.name} (upload failed)` } : m
+      ));
+    }
   };
 
   const submitFeedback = async () => {
