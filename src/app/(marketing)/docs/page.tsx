@@ -1,4 +1,4 @@
-import { BookOpen, Terminal, Plug, Server, ShieldCheck } from "lucide-react";
+import { BookOpen, Terminal, Plug, Server, ShieldCheck, Smartphone } from "lucide-react";
 
 function CodeBlock({ children }: { children: string }) {
   return (
@@ -46,6 +46,7 @@ export default function DocsPage() {
               { href: "#embedding-widget", label: "Embedding the Widget" },
               { href: "#mcp-server-setup", label: "MCP Server Setup" },
               { href: "#api-reference", label: "API Reference" },
+              { href: "#testflight", label: "TestFlight Integration" },
               { href: "#approval-system", label: "Approval System" },
             ].map((link) => (
               <a
@@ -433,6 +434,86 @@ submit_solution \\
                   ))}
                 </tbody>
               </table>
+            </div>
+          </section>
+
+          {/* TestFlight Integration */}
+          <section className="mb-20">
+            <SectionHeading id="testflight" icon={Smartphone}>
+              TestFlight Integration
+            </SectionHeading>
+
+            <p className="text-gray-600 mb-6">
+              Bugsy can automatically pull in beta feedback from Apple&apos;s TestFlight — including
+              screenshots, crash reports, and tester comments. Feedback is ingested, AI-categorized,
+              and routed through the approval pipeline.
+            </p>
+
+            <h3 className="text-lg font-bold text-gray-900 mb-3">1. Configure App Store Connect</h3>
+            <p className="text-gray-600 mb-3">
+              You&apos;ll need an App Store Connect API key with access to your app&apos;s TestFlight data.
+              Create one at{" "}
+              <span className="text-violet-600 font-medium">App Store Connect → Users and Access → Integrations → App Store Connect API</span>.
+            </p>
+            <CodeBlock>{`curl -X POST https://your-bugsy-instance.com/api/testflight/config \\
+  -H "Authorization: Bearer YOUR_API_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "issuerId": "69a6de85-...",
+    "keyId": "ABC123",
+    "privateKey": "-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----",
+    "appId": "1234567890"
+  }'`}</CodeBlock>
+            <p className="text-gray-600 mt-3 mb-6">
+              This returns a <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">webhookSecret</code> and <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">webhookUrl</code> for
+              real-time ingestion.
+            </p>
+
+            <h3 className="text-lg font-bold text-gray-900 mb-3">2. Set Up Webhook (Recommended)</h3>
+            <p className="text-gray-600 mb-3">
+              Register the webhook URL in App Store Connect so feedback arrives in real-time:
+            </p>
+            <CodeBlock>{`Webhook URL: https://your-bugsy-instance.com/api/testflight/webhook
+
+Events to subscribe:
+  • BETA_FEEDBACK_SCREENSHOT_SUBMISSION_CREATED
+  • BETA_FEEDBACK_CRASH_SUBMISSION_CREATED`}</CodeBlock>
+
+            <h3 className="text-lg font-bold text-gray-900 mt-6 mb-3">3. Or Sync On-Demand</h3>
+            <p className="text-gray-600 mb-3">
+              Use the MCP tool or API to pull feedback manually:
+            </p>
+            <CodeBlock>{`# Via API
+curl -X POST https://your-bugsy-instance.com/api/testflight/sync \\
+  -H "Authorization: Bearer YOUR_API_TOKEN"
+
+# Via MCP (in Claude Code)
+bugsy.sync_testflight()`}</CodeBlock>
+
+            <h3 className="text-lg font-bold text-gray-900 mt-6 mb-3">4. Auto-Approve Trusted Testers</h3>
+            <p className="text-gray-600 mb-3">
+              Add tester emails to the auto-approve list. Their feedback skips review and goes
+              straight to AI developers:
+            </p>
+            <CodeBlock>{`# Add an auto-approve rule
+curl -X POST https://your-bugsy-instance.com/api/testflight/auto-approve \\
+  -H "Authorization: Bearer YOUR_API_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{"email": "trusted-tester@example.com", "name": "Jane Doe"}'
+
+# Via MCP
+bugsy.add_auto_approve_rule({ email: "trusted-tester@example.com" })`}</CodeBlock>
+
+            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-5">
+              <h4 className="font-bold text-blue-900 mb-2">How the pipeline works</h4>
+              <ul className="text-blue-800 space-y-1.5 text-sm">
+                <li>1. TestFlight tester submits screenshot or crash feedback</li>
+                <li>2. Bugsy ingests it via webhook (instant) or sync (on-demand)</li>
+                <li>3. AI categorizes as bug/feature and sets priority</li>
+                <li>4. If tester email matches an auto-approve rule → <strong>Request created as APPROVED</strong></li>
+                <li>5. Otherwise → <strong>Request created as PENDING</strong> for admin/developer review</li>
+                <li>6. AI developers pick up approved requests via MCP tools</li>
+              </ul>
             </div>
           </section>
 

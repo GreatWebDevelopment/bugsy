@@ -9,6 +9,10 @@ import {
   Zap,
   ArrowRight,
   CheckCircle2,
+  Smartphone,
+  TestTube2,
+  UserCheck,
+  GitPullRequest,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -100,7 +104,7 @@ export default function HomePage() {
               lifecycle with AI.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
                 icon: MessageSquare,
@@ -113,6 +117,11 @@ export default function HomePage() {
                 desc: "Bugsy asks clarifying questions, categorizes issues, and prioritizes automatically.",
               },
               {
+                icon: Smartphone,
+                title: "TestFlight Integration",
+                desc: "Beta tester feedback from TestFlight flows directly into Bugsy. Screenshots, crash logs, and all.",
+              },
+              {
                 icon: Plug,
                 title: "MCP Developer Tools",
                 desc: "AI agents connect via MCP to pull requests and submit solutions programmatically.",
@@ -120,7 +129,12 @@ export default function HomePage() {
               {
                 icon: ShieldCheck,
                 title: "Approval Workflow",
-                desc: "Auto-approve trusted developers or require manual review before changes ship.",
+                desc: "Auto-approve trusted testers or require manual review before changes ship.",
+              },
+              {
+                icon: GitPullRequest,
+                title: "End-to-End Resolution",
+                desc: "From user report to code fix to approval — the entire loop, automated by AI.",
               },
             ].map((f) => (
               <div
@@ -187,6 +201,92 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TestFlight Integration */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
+                <TestTube2 className="w-3.5 h-3.5" />
+                TestFlight Integration
+              </div>
+              <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight">
+                Beta feedback,{" "}
+                <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+                  automatically resolved
+                </span>
+              </h2>
+              <p className="mt-5 text-lg text-gray-600 leading-relaxed">
+                Connect your App Store Connect account and Bugsy pulls in every
+                screenshot and crash report your TestFlight testers submit. AI
+                categorizes and prioritizes each one — and trusted testers can
+                have their feedback go straight to your AI developers, no manual
+                review needed.
+              </p>
+              <ul className="mt-8 space-y-4">
+                {[
+                  { icon: Smartphone, text: "Screenshot & crash feedback synced automatically via webhook or on-demand" },
+                  { icon: UserCheck, text: "Auto-approve rules for trusted testers — their feedback skips the queue" },
+                  { icon: Brain, text: "AI categorizes as bug/feature and sets priority from crash logs and context" },
+                  { icon: Zap, text: "Authorized feedback goes straight to AI developers for immediate resolution" },
+                ].map((item) => (
+                  <li key={item.text} className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <item.icon className="w-4 h-4 text-violet-600" />
+                    </div>
+                    <span className="text-gray-700">{item.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* TestFlight flow diagram */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-400 to-violet-400 rounded-3xl blur-2xl opacity-10" />
+              <div className="relative bg-gray-950 rounded-2xl p-8 text-sm font-mono">
+                <div className="text-gray-500 mb-4"># TestFlight feedback pipeline</div>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-blue-400" />
+                    <span className="text-blue-400">TestFlight tester</span>
+                    <span className="text-gray-600">submits feedback</span>
+                  </div>
+                  <div className="pl-5 border-l-2 border-gray-800 ml-[3px] py-1">
+                    <span className="text-gray-500">↓ webhook / sync</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-violet-400" />
+                    <span className="text-violet-400">Bugsy</span>
+                    <span className="text-gray-600">ingests &amp; AI categorizes</span>
+                  </div>
+                  <div className="pl-5 border-l-2 border-gray-800 ml-[3px] py-1">
+                    <span className="text-gray-500">↓ auto-approve check</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-green-400" />
+                    <span className="text-green-400">Authorized?</span>
+                    <span className="text-green-400/70">→ APPROVED instantly</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-yellow-400" />
+                    <span className="text-yellow-400">Not authorized?</span>
+                    <span className="text-yellow-400/70">→ Queued for review</span>
+                  </div>
+                  <div className="pl-5 border-l-2 border-gray-800 ml-[3px] py-1">
+                    <span className="text-gray-500">↓ MCP tools</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    <span className="text-emerald-400">AI developer</span>
+                    <span className="text-gray-600">claims &amp; resolves</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
