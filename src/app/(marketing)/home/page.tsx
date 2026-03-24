@@ -1,0 +1,241 @@
+import Link from "next/link";
+import {
+  MessageSquare,
+  Brain,
+  Plug,
+  ShieldCheck,
+  Code2,
+  MessagesSquare,
+  Zap,
+  ArrowRight,
+  CheckCircle2,
+} from "lucide-react";
+
+export default function HomePage() {
+  return (
+    <>
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-violet-50 via-white to-purple-50">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-violet-100/40 via-transparent to-transparent" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-sm font-medium mb-6">
+                <Zap className="w-3.5 h-3.5" />
+                Open Source &middot; AI-Powered
+              </div>
+              <h1 className="text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[1.1]">
+                Let your users{" "}
+                <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+                  fix bugs
+                </span>{" "}
+                for you
+              </h1>
+              <p className="mt-6 text-xl text-gray-600 leading-relaxed max-w-lg">
+                Bugsy is an AI-powered chat widget that collects bug reports and
+                feature requests, then lets AI developers resolve them
+                automatically.
+              </p>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                <Link
+                  href="/get-started"
+                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-violet-600 text-white font-semibold text-base hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200"
+                >
+                  Get Started Free
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Link>
+                <Link
+                  href="/home#how-it-works"
+                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border-2 border-gray-200 text-gray-700 font-semibold text-base hover:border-violet-300 hover:text-violet-700 transition-colors"
+                >
+                  See How It Works
+                </Link>
+              </div>
+            </div>
+
+            {/* Mock widget preview */}
+            <div className="relative hidden lg:block">
+              <div className="absolute -inset-4 bg-gradient-to-r from-violet-400 to-purple-400 rounded-3xl blur-2xl opacity-20" />
+              <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 max-w-sm ml-auto">
+                <div className="bg-violet-600 px-5 py-4 flex items-center justify-between">
+                  <span className="text-white font-semibold flex items-center gap-2 text-sm">
+                    <span className="text-lg">&#x1F41B;</span> Bugsy
+                  </span>
+                  <span className="text-white/60 text-lg">&times;</span>
+                </div>
+                <div className="p-4 space-y-3">
+                  <div className="bg-gray-100 rounded-xl rounded-tl-sm px-4 py-2.5 text-sm text-gray-700 max-w-[80%]">
+                    Hi! I&apos;m Bugsy. I can help you report bugs or request features. How can I help?
+                  </div>
+                  <div className="bg-violet-600 text-white rounded-xl rounded-tr-sm px-4 py-2.5 text-sm ml-auto max-w-[80%]">
+                    The dashboard page crashes when I click &quot;Export&quot;
+                  </div>
+                  <div className="bg-gray-100 rounded-xl rounded-tl-sm px-4 py-2.5 text-sm text-gray-700 max-w-[80%]">
+                    Got it! Can you tell me which browser you&apos;re using? And do you see an error message?
+                  </div>
+                </div>
+                <div className="border-t border-gray-100 px-4 py-3 flex gap-2">
+                  <div className="flex-1 bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-400">
+                    Type a message...
+                  </div>
+                  <div className="bg-violet-600 text-white text-sm font-medium px-4 py-2 rounded-lg">
+                    Send
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section id="features" className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900">
+              Everything you need to squash bugs faster
+            </h2>
+            <p className="mt-4 text-lg text-gray-500">
+              From collection to resolution, Bugsy handles the entire bug
+              lifecycle with AI.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: MessageSquare,
+                title: "Embeddable Widget",
+                desc: "Drop a single script tag on your site. Users chat with Bugsy to report issues naturally.",
+              },
+              {
+                icon: Brain,
+                title: "AI-Powered Triage",
+                desc: "Bugsy asks clarifying questions, categorizes issues, and prioritizes automatically.",
+              },
+              {
+                icon: Plug,
+                title: "MCP Developer Tools",
+                desc: "AI agents connect via MCP to pull requests and submit solutions programmatically.",
+              },
+              {
+                icon: ShieldCheck,
+                title: "Approval Workflow",
+                desc: "Auto-approve trusted developers or require manual review before changes ship.",
+              },
+            ].map((f) => (
+              <div
+                key={f.title}
+                className="group p-8 rounded-2xl border border-gray-100 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-50 transition-all duration-300"
+              >
+                <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-5 group-hover:bg-violet-600 transition-colors">
+                  <f.icon className="w-6 h-6 text-violet-600 group-hover:text-white transition-colors" />
+                </div>
+                <h3 className="font-bold text-gray-900 text-lg mb-2">
+                  {f.title}
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  {f.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section id="how-it-works" className="py-24 bg-gray-950 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl lg:text-4xl font-extrabold">
+              Three steps to bug-free
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              Get from zero to automated bug resolution in minutes.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-12">
+            {[
+              {
+                icon: Code2,
+                step: "01",
+                title: "Embed",
+                desc: "Add the widget to your site with one line of code. No build step required.",
+              },
+              {
+                icon: MessagesSquare,
+                step: "02",
+                title: "Collect",
+                desc: "Users report bugs and features through conversational chat. AI triages automatically.",
+              },
+              {
+                icon: Zap,
+                step: "03",
+                title: "Resolve",
+                desc: "AI developers claim requests and submit fixes via MCP. Approve and ship.",
+              },
+            ].map((s) => (
+              <div key={s.step} className="relative">
+                <span className="text-6xl font-black text-violet-500/20 absolute -top-6 -left-2">
+                  {s.step}
+                </span>
+                <div className="relative pt-8">
+                  <div className="w-12 h-12 rounded-xl bg-violet-600 flex items-center justify-center mb-5">
+                    <s.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="font-bold text-xl mb-3">{s.title}</h3>
+                  <p className="text-gray-400 leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats / Social proof */}
+      <section className="py-20 bg-gradient-to-r from-violet-600 to-purple-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-12 text-center">
+            {[
+              { stat: "10x", label: "Faster bug resolution" },
+              { stat: "Zero", label: "Setup required" },
+              { stat: "Any", label: "Tech stack supported" },
+            ].map((s) => (
+              <div key={s.label}>
+                <div className="text-5xl font-extrabold mb-2">{s.stat}</div>
+                <div className="text-violet-100 text-lg">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-white">
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-6">
+            Ready to let AI handle your bugs?
+          </h2>
+          <p className="text-lg text-gray-500 mb-10">
+            Bugsy is free, open source, and ready to deploy. Get started in
+            under 5 minutes.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/get-started"
+              className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-violet-600 text-white font-semibold hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200"
+            >
+              <CheckCircle2 className="mr-2 w-5 h-5" />
+              Get Started Free
+            </Link>
+            <Link
+              href="/docs"
+              className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border-2 border-gray-200 text-gray-700 font-semibold hover:border-violet-300 hover:text-violet-700 transition-colors"
+            >
+              Read the Docs
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { categorizeRequest } from "@/lib/ai";
 import { NextRequest } from "next/server";
 
 export async function POST(
@@ -23,13 +24,23 @@ export async function POST(
     .map((m) => m.content)
     .join("\n\n");
 
+  // Auto-categorize if type/priority not provided
+  let type = body.type;
+  let priority = body.priority;
+  if (!type || !priority) {
+    const fullText = conversation.messages.map((m) => `${m.sender}: ${m.content}`).join("\n");
+    const categorization = await categorizeRequest(fullText);
+    type = type || categorization.type;
+    priority = priority || categorization.priority;
+  }
+
   const req = await prisma.request.create({
     data: {
       conversationId: id,
       title: body.title,
       description,
-      type: body.type || "BUG",
-      priority: body.priority || "MEDIUM",
+      type,
+      priority,
     },
   });
 
