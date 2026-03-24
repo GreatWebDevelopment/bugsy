@@ -13,6 +13,7 @@ import {
   TestTube2,
   UserCheck,
   GitPullRequest,
+  Camera,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -75,10 +76,45 @@ export default function HomePage() {
                     The dashboard page crashes when I click &quot;Export&quot;
                   </div>
                   <div className="bg-gray-100 rounded-xl rounded-tl-sm px-4 py-2.5 text-sm text-gray-700 max-w-[80%]">
-                    Got it! Can you tell me which browser you&apos;re using? And do you see an error message?
+                    That sounds like a bug. Can you share a screenshot of the error?
+                  </div>
+                  {/* Screenshot upload preview */}
+                  <div className="ml-auto max-w-[85%]">
+                    <div className="bg-violet-600 text-white rounded-xl rounded-tr-sm px-4 py-2 text-sm mb-1.5">
+                      Here&apos;s what I see:
+                    </div>
+                    <div className="bg-violet-600/10 border border-violet-200 rounded-xl p-2 rounded-tr-sm">
+                      <div className="bg-gray-900 rounded-lg p-3 text-xs font-mono">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                          <span className="text-gray-500 text-[10px] ml-1">dashboard/export</span>
+                        </div>
+                        <div className="text-red-400">TypeError: Cannot read properties</div>
+                        <div className="text-red-400/70">of undefined (&apos;map&apos;)</div>
+                        <div className="text-gray-600 mt-1">at ExportButton.tsx:42</div>
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-1.5 px-1">
+                        <Camera className="w-3 h-3 text-violet-400" />
+                        <span className="text-[10px] text-violet-500 font-medium">screenshot-export-error.png</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-gray-100 rounded-xl rounded-tl-sm px-4 py-2.5 text-sm text-gray-700 max-w-[80%]">
+                    Thanks! I can see the error. Click <span className="font-semibold text-violet-600">&quot;Submit Feedback&quot;</span> when you&apos;re ready and I&apos;ll send this to the team.
+                  </div>
+                </div>
+                {/* Submit feedback button */}
+                <div className="px-4 pb-2">
+                  <div className="border border-violet-300 text-violet-600 text-xs font-medium text-center py-1.5 rounded-lg cursor-default">
+                    &#x1F4DD; Submit Feedback
                   </div>
                 </div>
                 <div className="border-t border-gray-100 px-4 py-3 flex gap-2">
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-gray-400 text-sm cursor-default">
+                    &#x1F4F7;
+                  </div>
                   <div className="flex-1 bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-400">
                     Type a message...
                   </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Script from "next/script";
 import { Bug } from "lucide-react";
 
 export default function MarketingLayout({
@@ -97,6 +98,11 @@ export default function MarketingLayout({
           </div>
         </div>
       </footer>
+      {/* Live Bugsy Widget */}
+      <Script src="/widget/bugsy-widget.js" strategy="lazyOnload" />
+      <Script id="bugsy-init" strategy="lazyOnload">
+        {`if (window.Bugsy) { window.Bugsy.init({ apiUrl: window.location.origin, primaryColor: '#7c3aed', greeting: "Hi! I'm Bugsy 🐛 Try me out — report a bug, request a feature, or upload a screenshot. This is a live demo!" }); }`}
+      </Script>
     </div>
   );
 }
