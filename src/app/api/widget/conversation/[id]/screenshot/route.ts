@@ -1,7 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+const s3 = new S3Client({
+  region: process.env.AWS_DEFAULT_REGION || "us-east-1",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+  },
+});
+
+const BUCKET = process.env.AWS_PUBLIC_BUCKET || "greatwebdevelopment-public";
 
 export async function POST(
   request: NextRequest,
@@ -29,28 +38,37 @@ export async function POST(
     return Response.json({ error: "File must be under 5MB" }, { status: 400 });
   }
 
-  // Save to public/uploads/<conversationId>/
-  const uploadDir = path.join(process.cwd(), "public", "uploads", id);
-  await mkdir(uploadDir, { recursive: true });
+  try {
+    const ext = file.name.split(".").pop() || "png";
+    const fileName = `${Date.now()}.${ext}`;
+    const s3Key = `bugsy/screenshots/${id}/${fileName}`;
 
-  const ext = file.name.split(".").pop() || "png";
-  const fileName = `${Date.now()}.${ext}`;
-  const filePath = path.join(uploadDir, fileName);
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(filePath, buffer);
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: BUCKET,
+        Key: s3Key,
+        Body: buffer,
+        ContentType: file.type,
+      })
+    );
 
-  const publicPath = `/uploads/${id}/${fileName}`;
+    const publicUrl = `https://${BUCKET}.s3.amazonaws.com/${s3Key}`;
 
-  const screenshot = await prisma.screenshot.create({
-    data: {
-      conversationId: id,
-      filePath: publicPath,
-      fileName: file.name,
-      fileSize: file.size,
-      mimeType: file.type,
-    },
-  });
+    const screenshot = await prisma.screenshot.create({
+      data: {
+        conversationId: id,
+        filePath: publicUrl,
+        fileName: file.name,
+        fileSize: file.size,
+        mimeType: file.type,
+      },
+    });
 
-  return Response.json({ screenshot, url: publicPath });
+    return Response.json({ screenshot, url: publicUrl });
+  } catch (error) {
+    console.error("Screenshot upload error:", error);
+    return Response.json({ error: "Failed to upload screenshot" }, { status: 500 });
+  }
 }
