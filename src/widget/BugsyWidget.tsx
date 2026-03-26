@@ -351,7 +351,7 @@ const BugsyWidget: React.FC<BugsyConfig> = ({ apiUrl, position = 'bottom-right',
         // Update message with server URL
         setMessages(prev => prev.map(m =>
           m.id === tempId
-            ? { ...m, content: `Screenshot: ${file.name}`, imageUrl: `${apiUrl}${data.url}` }
+            ? { ...m, content: `Screenshot: ${file.name}`, imageUrl: data.url.startsWith('http') ? data.url : `${apiUrl}${data.url}` }
             : m
         ));
       } else {
